@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+    <title>Menua</title>
+    <h:outputStylesheet name="css/styles.css" />
+</h:head>
+<h:body>
+    <div class="card menu-card">
+        <div class="title">Select Option</div>
+
+        <h:form>
+            <h:commandButton value="Create Ride" styleClass="btn" action="CreateRide?faces-redirect=true" />
+            <h:commandButton value="Query Rides" styleClass="btn" action="QueryRides?faces-redirect=true" />
+        </h:form>
+    </div>
+</h:body>
+</html>

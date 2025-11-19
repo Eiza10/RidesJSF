@@ -30,6 +30,6 @@ https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd"
 </context-param>
  <!-- Hasierako JSFak -->
  <welcome-file-list>
- <welcome-file>Login.xhtml</welcome-file>
+ <welcome-file>Menua.xhtml</welcome-file>
  </welcome-file-list>
 </web-app>

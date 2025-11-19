@@ -7,24 +7,16 @@ https://jakarta.ee/xml/ns/jakartaee/web-facesconfig_3_0.xsd"
  version="3.0">
 
  <navigation-rule>
-<display-name>Login.xhtml</display-name>
-<from-view-id>/Login.xhtml</from-view-id>
-<navigation-case>
-<from-outcome>ok</from-outcome>
-<to-view-id>/Kaixo.xhtml</to-view-id>
-</navigation-case>
-</navigation-rule>
-<navigation-rule>
-<display-name>Login.xhtml</display-name>
-<from-view-id>/Login.xhtml</from-view-id>
-<navigation-case>
-<from-outcome>error</from-outcome>
-<to-view-id>/Pirata.xhtml</to-view-id>
-</navigation-case>
-</navigation-rule>
-<converter>
-<description>ErabiltzailearenMotaConverter faces-config.xml-n definitua</description>
-<converter-id>ErabiltzailearenMotaConverter</converter-id>
-<converter-class>eredua.bean.ErabiltzailearenMotaConverter</converter-class>
-</converter>
+  <display-name>Menua.xhtml</display-name>
+  <from-view-id>/Menua.xhtml</from-view-id>
+  <navigation-case>
+   <from-outcome>CreateRide</from-outcome>
+   <to-view-id>/CreateRide.xhtml</to-view-id>
+  </navigation-case>
+  <navigation-case>
+   <from-outcome>QueryRides</from-outcome>
+   <to-view-id>/QueryRides.xhtml</to-view-id>
+  </navigation-case>
+ </navigation-rule>
+
 </faces-config>

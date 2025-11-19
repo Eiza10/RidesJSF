@@ -1,0 +1,23 @@
+------------------------------------------------------------------------------------------------------------------------
+
+[2025-11-17 18:27:20 #1 store] 
+Database 'C:\Users\Haritz\Downloads\Rides24\src\main\resources\rides.temp' is opened by 18256@Vivobook-ASUS
+
+[2025-11-17 18:27:20 #2 type.registry] 
+New type domain.Driver
+
+[2025-11-17 18:27:20 #3 type] 
+Type domain.Driver is not enhanced.
+
+[2025-11-17 18:27:20 #4 type.registry] 
+New type domain.Ride
+
+[2025-11-17 18:27:20 #5 type] 
+Type domain.Ride is not enhanced.
+
+[2025-11-17 18:27:20 #6 type.registry] 
+New type java.util.Vector<java.lang.Object>
+
+[2025-11-17 18:27:20 #7 type.registry] 
+New type java.util.Vector<domain.Ride>
+

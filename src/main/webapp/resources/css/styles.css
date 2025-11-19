@@ -1,0 +1,111 @@
+/* Common styles for all pages */
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+}
+
+.card-wide {
+    max-width: 900px;
+}
+
+.form-layout {
+    display: flex;
+    gap: 30px;
+    align-items: flex-start;
+}
+
+.form-column {
+    flex: 1;
+    min-width: 300px;
+}
+
+.calendar-column {
+    flex: 0 0 auto;
+}
+
+.title {
+    font-size: 32px;
+    margin-bottom: 25px;
+    color: #333;
+    font-weight: bold;
+}
+
+/* Form styles */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #555;
+    font-weight: 500;
+}
+
+.ui-inputfield {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+/* Button styles */
+.btn {
+    background: #00d266;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    margin: 10px;
+    cursor: pointer;
+    font-size: 15px;
+    transition: background 0.3s;
+    min-width: 140px;
+}
+
+.btn:hover {
+    background: #ffffff;
+    color: #00d266;
+}
+
+.btn-secondary {
+   background: #ffffff;
+   color: #00d266;
+}
+
+.btn-secondary:hover {
+	background: #00d266;
+    color: white;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Menu specific - compact card */
+.menu-card {
+    width: 350px;
+    max-width: 350px;
+}

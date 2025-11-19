@@ -40,15 +40,6 @@ public class QueryRidesBean implements Serializable {
     public void init() {
     	departCities = facadeBL.getDepartCities();
     	destinationCities = new ArrayList<String>();
-    	List<String> citiesHelper = new ArrayList<String>();
-    			
-		for(int i=0; i< departCities.size();i++) {
-            citiesHelper = facadeBL.getDestinationCities(departCities.get(i));
-            for (int j=0; j<citiesHelper.size();j++){
-            	destinationCities.add(citiesHelper.get(j));
-    		}
-    	}
-    
         this.date = new Date();
     }
 
@@ -61,7 +52,7 @@ public class QueryRidesBean implements Serializable {
     }
     
     public List<String> getDestinationCities() {
-        return destinationCities;
+        return facadeBL.getDestinationCities(from);
     }
 
     public void setDestinationCities(List<String> destinationCities) {
@@ -113,17 +104,14 @@ public class QueryRidesBean implements Serializable {
     }
 
     public void searchRides() {
-    	System.out.println("searchRides BARRUAN");
         if (from != null && to != null && date != null) {
             if (from.equals(to)) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning", "Origin and destination cannot be the same."));
                 this.rides = new Vector<>(); 
             } else {
-            	System.out.println("BADOZ: " + from + ", " + to);
                 this.rides = facadeBL.getRides(from, to, date);
                 this.datesWithRides = facadeBL.getThisMonthDatesWithRides(from, to, date);
-                System.out.println("RIDES: " + rides);
             }
         }
     }

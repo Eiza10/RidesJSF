@@ -27,27 +27,25 @@ public class CreateRideBean implements Serializable {
 	private Date rideDate;
 	private int seats;
 	private float price;
-	private String driverEmail = "driver1@gmail.com"; // Por ahora hardcodeado, luego se puede obtener de sesión
+	private String driverEmail = "driver1@gmail.com"; // Oraingoz 
 	
 	public CreateRideBean() {
-	    System.out.println("=== DEBUG: Entrando al constructor de CreateRideBean ===");
+	    System.out.println("=== DEBUG: CreateRideBean eraikitzailean sartzen ===");
 	    try {
-	        // 1. Intentamos obtener la lógica
 	        this.facadeBL = FacadeBean.getBusinessLogic();
 	        
-	        // 2. Verificamos si llegó null
 	        if (this.facadeBL == null) {
-	            System.out.println("=== ERROR CRÍTICO: FacadeBean.getBusinessLogic() devolvió NULL ===");
+	            System.out.println("=== ERROR: FacadeBean.getBusinessLogic() is NULL ===");
 	        } else {
-	            System.out.println("=== ÉXITO: FacadeBean cargado correctamente ===");
+	            System.out.println("=== SUCCESS: FacadeBean ondo kargatu da ===");
 	        }
 	        
 	        this.rideDate = new Date();
-	        System.out.println("=== DEBUG: Constructor finalizado con éxito ===");
+	        System.out.println("=== DEBUG: Eraikitzailea ondo burutu da ===");
 	        
 	    } catch (Exception e) {
-	        System.out.println("=== EXCEPCIÓN EN CONSTRUCTOR ===");
-	        e.printStackTrace(); // ¡Esto nos dirá el error real!
+	        System.out.println("=== EXCEPTION ERAIKITZAILEAN ===");
+	        e.printStackTrace(); 
 	    }
 	}
 	

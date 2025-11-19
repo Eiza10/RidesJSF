@@ -24,7 +24,8 @@ public class QueryRidesBean implements Serializable {
 
     private BLFacade facadeBL;
 
-    private List<String> cities;
+    private List<String> departCities;
+    private List<String> destinationCities;
     private String from;
     private String to;
     private Date date;
@@ -37,31 +38,34 @@ public class QueryRidesBean implements Serializable {
 
     @PostConstruct
     public void init() {
-    	List<String> departCities = facadeBL.getDepartCities();
-    	List<String> destinationCities = new ArrayList<String>();
+    	departCities = facadeBL.getDepartCities();
+    	destinationCities = new ArrayList<String>();
     	List<String> citiesHelper = new ArrayList<String>();
     			
 		for(int i=0; i< departCities.size();i++) {
             citiesHelper = facadeBL.getDestinationCities(departCities.get(i));
             for (int j=0; j<citiesHelper.size();j++){
-                if (!(departCities.contains(citiesHelper.get(j)))) {
-                    destinationCities.add(citiesHelper.get(j));
-                }
-			
+            	destinationCities.add(citiesHelper.get(j));
     		}
     	}
     
-    	departCities.addAll(destinationCities);
-        this.cities = departCities;
         this.date = new Date();
     }
 
-    public List<String> getCities() {
-        return cities;
+    public List<String> getDepartCities() {
+        return departCities;
     }
 
-    public void setCities(List<String> cities) {
-        this.cities = cities;
+    public void setDepartCities(List<String> departCities) {
+        this.departCities = departCities;
+    }
+    
+    public List<String> getDestinationCities() {
+        return destinationCities;
+    }
+
+    public void setDestinationCities(List<String> destinationCities) {
+        this.departCities = destinationCities;
     }
 
     public String getFrom() {
@@ -114,7 +118,7 @@ public class QueryRidesBean implements Serializable {
             if (from.equals(to)) {
                 FacesContext.getCurrentInstance().addMessage(null,
                         new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning", "Origin and destination cannot be the same."));
-                this.rides = new Vector<>(); // Clear previous results
+                this.rides = new Vector<>(); 
             } else {
             	System.out.println("BADOZ: " + from + ", " + to);
                 this.rides = facadeBL.getRides(from, to, date);

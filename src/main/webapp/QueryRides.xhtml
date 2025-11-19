@@ -39,7 +39,7 @@
                             <p:outputLabel for="from" value="Depart City" />
                             <p:selectOneMenu id="from" value="#{queryRidesBean.from}" required="true" requiredMessage="Please select a departure city.">
                                 <f:selectItem itemLabel="Select City" itemValue="" />
-                                <f:selectItems value="#{queryRidesBean.cities}" />
+                                <f:selectItems value="#{queryRidesBean.departCities}" />
                                 <p:ajax event="change" update="to ridesTable calendarPanel" listener="#{queryRidesBean.searchRides}" />
                             </p:selectOneMenu>
                             <h:message for="from" />
@@ -47,7 +47,7 @@
                             <p:outputLabel for="to" value="Arrival City" />
                             <p:selectOneMenu id="to" value="#{queryRidesBean.to}" required="true" requiredMessage="Please select an arrival city.">
                                 <f:selectItem itemLabel="Select City" itemValue="" />
-                                <f:selectItems value="#{queryRidesBean.cities}" />
+                                <f:selectItems value="#{queryRidesBean.destinationCities}" />
                                 <p:ajax event="change" update="ridesTable calendarPanel" listener="#{queryRidesBean.searchRides}" />
                             </p:selectOneMenu>
                             <h:message for="to" />

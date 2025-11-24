@@ -138,12 +138,12 @@ public class CreateRideBean implements Serializable {
 			
 		} catch (RideMustBeLaterThanTodayException e) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-				"Error", e.getMessage()));
+				"Error", "Ride must be later than today"));
 			return null;
 			
 		} catch (RideAlreadyExistException e) {
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
-				"Error", e.getMessage()));
+				"Error", "Ride already exists"));
 			return null;
 		}
 	}

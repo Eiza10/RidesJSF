@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
 import jakarta.faces.view.ViewScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 
 import businessLogic.BLFacade;
@@ -20,6 +21,9 @@ import exceptions.RideMustBeLaterThanTodayException;
 public class CreateRideBean implements Serializable {
 	private static final long serialVersionUID = 1L;
 	
+	@Inject
+	private LoginBean loginBean;
+	
 	private BLFacade facadeBL;
 	
 	private String origin;
@@ -27,7 +31,6 @@ public class CreateRideBean implements Serializable {
 	private Date rideDate;
 	private int seats;
 	private float price;
-	private String driverEmail = "driver1@gmail.com"; // Oraingoz 
 	
 	public CreateRideBean() {
 	    System.out.println("=== DEBUG: CreateRideBean eraikitzailean sartzen ===");
@@ -89,16 +92,14 @@ public class CreateRideBean implements Serializable {
 		this.price = price;
 	}
 
-	public String getDriverEmail() {
-		return driverEmail;
-	}
-
-	public void setDriverEmail(String driverEmail) {
-		this.driverEmail = driverEmail;
-	}
-
 	public String createRide() {
 		FacesContext context = FacesContext.getCurrentInstance();
+		
+		if (loginBean == null || loginBean.getCurrentUser() == null) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, 
+				"Error", "You must be logged in to create a ride"));
+			return "Login?faces-redirect=true";
+		}
 		
 		// Balidazioak
 		if (origin == null || origin.trim().isEmpty() || 
@@ -122,7 +123,7 @@ public class CreateRideBean implements Serializable {
 		
 		try {
 			facadeBL.createRide(origin, destination, UtilDate.trim(rideDate), 
-				seats, price, driverEmail);
+				seats, price, loginBean.getCurrentUser().getEmail());
 			
 			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, 
 				"Success", "Ride created successfully!"));

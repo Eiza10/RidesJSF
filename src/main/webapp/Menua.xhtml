@@ -9,10 +9,18 @@
 <h:body>
     <div class="card menu-card">
         <div class="title">Select Option</div>
+        
+        <h:panelGroup rendered="#{loginBean.loggedIn}">
+            <p>Welcome, #{loginBean.currentUser.name}!</p>
+        </h:panelGroup>
 
         <h:form>
-            <h:commandButton value="Create Ride" styleClass="btn" action="CreateRide?faces-redirect=true" />
+            <h:commandButton value="Create Ride" styleClass="btn" action="CreateRide?faces-redirect=true" rendered="#{loginBean.loggedIn}" />
             <h:commandButton value="Query Rides" styleClass="btn" action="QueryRides?faces-redirect=true" />
+            
+            <h:commandButton value="Login" styleClass="btn" action="Login?faces-redirect=true" rendered="#{!loginBean.loggedIn}" />
+            <h:commandButton value="Register" styleClass="btn" action="Register?faces-redirect=true" rendered="#{!loginBean.loggedIn}" />
+            <h:commandButton value="Logout" styleClass="btn" action="#{loginBean.logout}" rendered="#{loginBean.loggedIn}" />
         </h:form>
     </div>
 </h:body>

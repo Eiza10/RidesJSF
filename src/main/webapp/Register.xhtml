@@ -1,0 +1,37 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Register</title>
+    <h:outputStylesheet name="css/styles.css" />
+</h:head>
+
+<h:body>
+    <h:form>
+        <p:panel header="Register">
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+            
+            <h:panelGrid columns="2" cellpadding="5">
+                <h:outputLabel for="email" value="Email:" />
+                <p:inputText id="email" value="#{registerBean.email}" required="true" label="Email" />
+                
+                <h:outputLabel for="name" value="Name:" />
+                <p:inputText id="name" value="#{registerBean.name}" required="true" label="Name" />
+                
+                <h:outputLabel for="password" value="Password:" />
+                <p:password id="password" value="#{registerBean.password}" required="true" label="Password" />
+                
+                <f:facet name="footer">
+                    <p:commandButton value="Register" action="#{registerBean.register}" update="messages" />
+                    <p:button value="Login" outcome="Login" style="margin-left:10px;" />
+                    <p:button value="Back to Menu" outcome="Menua" style="margin-left:10px;" />
+                </f:facet>
+            </h:panelGrid>
+        </p:panel>
+    </h:form>
+</h:body>
+</html>

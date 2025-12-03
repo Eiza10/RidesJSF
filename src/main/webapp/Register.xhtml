@@ -11,27 +11,65 @@
 </h:head>
 
 <h:body>
-    <h:form>
-        <p:panel header="Register">
+    <div class="card">
+        <h:form>
+            <h1 class="title">Register</h1>
             <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
             
-            <h:panelGrid columns="2" cellpadding="5">
-                <h:outputLabel for="email" value="Email:" />
-                <p:inputText id="email" value="#{registerBean.email}" required="true" label="Email" />
-                
-                <h:outputLabel for="name" value="Name:" />
-                <p:inputText id="name" value="#{registerBean.name}" required="true" label="Name" />
-                
-                <h:outputLabel for="password" value="Password:" />
-                <p:password id="password" value="#{registerBean.password}" required="true" label="Password" />
-                
-                <f:facet name="footer">
-                    <p:commandButton value="Register" action="#{registerBean.register}" update="messages" />
-                    <p:button value="Login" outcome="Login" style="margin-left:10px;" />
-                    <p:button value="Back to Menu" outcome="Menua" style="margin-left:10px;" />
-                </f:facet>
-            </h:panelGrid>
-        </p:panel>
-    </h:form>
+            <div class="form-group">
+                <h:outputLabel for="email" value="Email:" style="display:block; text-align:left; margin-bottom:5px;"/>
+                <p:inputText id="email" value="#{registerBean.email}" required="true" style="width:100%; box-sizing:border-box;" />
+            </div>
+            
+            <div class="form-group" style="margin-top:15px;">
+                <h:outputLabel for="name" value="Name:" style="display:block; text-align:left; margin-bottom:5px;"/>
+                <p:inputText id="name" value="#{registerBean.name}" required="true" style="width:100%; box-sizing:border-box;" />
+            </div>
+            
+            <div class="form-group" style="margin-top:15px;">
+                <h:outputLabel for="password" value="Password:" style="display:block; text-align:left; margin-bottom:5px;"/>
+                <p:password id="password" value="#{registerBean.password}" required="true" style="width:100%; box-sizing:border-box;" />
+            </div>
+            
+            <div class="form-group" style="margin-top:15px; text-align:left;">
+                <h:outputLabel for="type" value="User Type:" style="display:block; margin-bottom:5px;"/>
+                <p:selectOneRadio id="type" value="#{registerBean.type}">
+                    <f:selectItem itemLabel="Driver" itemValue="Driver" />
+                    <f:selectItem itemLabel="Traveler" itemValue="Traveler" />
+                    <f:selectItem itemLabel="Admin" itemValue="Admin" />
+                    <p:ajax update="adminQuestPanel" />
+                </p:selectOneRadio>
+            </div>
+            
+            <h:panelGroup id="adminQuestPanel">
+                <h:panelGroup rendered="#{registerBean.type eq 'Admin'}" layout="block" style="margin-top:15px; background-color: #fff3cd; padding: 15px; border-radius: 8px; border: 1px solid #ffeeba;">
+                    <div style="text-align: center; margin-bottom: 10px;">
+                        <span style="font-size: 24px;">🛡️</span>
+                    </div>
+                    <h:outputText value="Security Check" style="display:block; font-weight:bold; color:#856404; margin-bottom:10px; text-align:center;"/>
+                    <h:outputLabel for="secret" value="Please enter the admin access code (Hint: it's 'admin')" style="display:block; text-align:left; margin-bottom:5px; color:#856404;"/>
+                    <div style="display:flex; gap:10px; align-items: center;">
+                        <p:inputText id="secret" value="#{registerBean.secretAnswer}" placeholder="Enter code..." style="flex:1;" />
+                        <p:commandButton value="Check" action="#{registerBean.checkQuest}" process="@this secret" update="questFeedback" styleClass="ui-button-warning" style="width: auto;" />
+                    </div>
+                    <h:panelGroup id="questFeedback" style="display:block; margin-top:10px; min-height: 20px;">
+                        <h:outputText value="#{registerBean.questMessage}" style="#{registerBean.questMessageStyle}" />
+                    </h:panelGroup>
+                </h:panelGroup>
+            </h:panelGroup>
+            
+            <div style="margin-top:25px;">
+                <h:commandButton value="Register" action="#{registerBean.register}" update="messages" styleClass="btn"  style="width:100%;" />
+            </div>
+            
+            <div class="text-center">
+                Already have an account? <h:link value="Login" outcome="Login" styleClass="link-highlight" />
+            </div>
+            
+            <div class="text-center" style="margin-top: 20px;">
+                <h:link value="Back to Menu" outcome="Menua" styleClass="btn-back" />
+            </div>
+        </h:form>
+    </div>
 </h:body>
 </html>

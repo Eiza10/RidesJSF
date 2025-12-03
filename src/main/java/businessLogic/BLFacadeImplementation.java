@@ -7,8 +7,11 @@ import configuration.ConfigXML;
 import dataAccess.HibernateDataAccess;
 import domain.Ride;
 import domain.Driver;
+import domain.User;
 import exceptions.RideMustBeLaterThanTodayException;
 import exceptions.RideAlreadyExistException;
+import exceptions.NotEnoughMoneyException;
+import exceptions.NotEnoughSeatsException;
 
 /**
  * It implements the business logic as a web service.
@@ -112,26 +115,109 @@ public class BLFacadeImplementation  implements BLFacade {
 		dbManager.close();
 	}
 
-	public Driver login(String email, String password) {
+	public User login(String email, String password) {
 		dbManager.open();
-		Driver d = dbManager.getDriver(email);
+		User user = dbManager.getUser(email);
 		dbManager.close();
-		if (d != null && d.getPassword() != null && d.getPassword().equals(password)) {
-			return d;
+		if (user != null && user.getPassword() != null && user.getPassword().equals(password)) {
+			if (user.isBanned()) {
+				throw new RuntimeException("User is banned until " + user.getBanExpirationDate());
+			}
+			return user;
 		}
 		return null;
 	}
 
-	public boolean register(String email, String name, String password) {
+	public boolean register(String email, String name, String password, String type) {
 		dbManager.open();
-		Driver d = dbManager.getDriver(email);
-		if (d != null) {
+		User user = dbManager.getUser(email);
+		if (user != null) {
 			dbManager.close();
 			return false;
 		}
-		dbManager.storeDriver(email, name, password);
+		dbManager.storeUser(email, name, password, type);
 		dbManager.close();
 		return true;
+	}
+	
+	public List<User> getAllUsers() {
+		dbManager.open();
+		List<User> users = dbManager.getAllUsers();
+		dbManager.close();
+		return users;
+	}
+	
+	public void banUser(String email, int duration, String timeUnit) {
+		dbManager.open();
+		Date date = new Date();
+		long millisToAdd = 0;
+		if ("Minutes".equals(timeUnit)) {
+			millisToAdd = (long)duration * 60 * 1000;
+		} else if ("Hours".equals(timeUnit)) {
+			millisToAdd = (long)duration * 60 * 60 * 1000;
+		} else { // Days
+			millisToAdd = (long)duration * 24 * 60 * 60 * 1000;
+		}
+		date.setTime(date.getTime() + millisToAdd);
+		dbManager.banUser(email, date);
+		dbManager.close();
+	}
+	
+	public void unbanUser(String email) {
+		dbManager.open();
+		dbManager.unbanUser(email);
+		dbManager.close();
+	}
+	
+	public List<Ride> getAllRides() {
+		dbManager.open();
+		List<Ride> rides = dbManager.getAllRides();
+		dbManager.close();
+		return rides;
+	}
+	
+	public List<Ride> getRidesByDriver(String driverEmail) {
+		dbManager.open();
+		List<Ride> rides = dbManager.getRidesByDriver(driverEmail);
+		dbManager.close();
+		return rides;
+	}
+	
+	public void deleteRide(Ride ride) {
+		dbManager.open();
+		dbManager.deleteRide(ride);
+		dbManager.close();
+	}
+	
+	public User getUser(String email) {
+		dbManager.open();
+		User user = dbManager.getUser(email);
+		dbManager.close();
+		return user;
+	}
+
+	public void depositMoney(String email, double amount) {
+		dbManager.open();
+		dbManager.depositMoney(email, amount);
+		dbManager.close();
+	}
+
+	public boolean withdrawMoney(String email, double amount) {
+		dbManager.open();
+		boolean success = dbManager.withdrawMoney(email, amount);
+		dbManager.close();
+		return success;
+	}
+	
+	public void bookRide(Integer rideNumber, String travelerEmail, int seats) throws NotEnoughSeatsException, NotEnoughMoneyException {
+		dbManager.open();
+		try {
+			dbManager.bookRide(rideNumber, travelerEmail, seats);
+		} catch (NotEnoughSeatsException | NotEnoughMoneyException e) {
+			throw e;
+		} finally {
+			dbManager.close();
+		}
 	}
 
 }

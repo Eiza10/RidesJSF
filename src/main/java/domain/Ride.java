@@ -134,7 +134,7 @@ public class Ride implements Serializable {
 	}
 
 	
-	public float getnPlaces() {
+	public int getnPlaces() {
 		return nPlaces;
 	}
 
@@ -144,7 +144,7 @@ public class Ride implements Serializable {
 	 * @param  nPlaces places to be set
 	 */
 
-	public void setBetMinimum(int nPlaces) {
+	public void setnPlaces(int nPlaces) {
 		this.nPlaces = nPlaces;
 	}
 

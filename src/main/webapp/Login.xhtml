@@ -11,24 +11,33 @@
 </h:head>
 
 <h:body>
-    <h:form>
-        <p:panel header="Login">
+    <div class="card">
+        <h:form>
+            <h1 class="title">Login</h1>
             <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
             
-            <h:panelGrid columns="2" cellpadding="5">
-                <h:outputLabel for="email" value="Email:" />
-                <p:inputText id="email" value="#{loginBean.email}" required="true" label="Email" />
-                
-                <h:outputLabel for="password" value="Password:" />
-                <p:password id="password" value="#{loginBean.password}" required="true" label="Password" />
-                
-                <f:facet name="footer">
-                    <p:commandButton value="Login" action="#{loginBean.login}" update="messages" />
-                    <p:button value="Register" outcome="Register" style="margin-left:10px;" />
-                    <p:button value="Back to Menu" outcome="Menua" style="margin-left:10px;" />
-                </f:facet>
-            </h:panelGrid>
-        </p:panel>
-    </h:form>
+            <div class="form-group">
+                <h:outputLabel for="email" value="Email:" style="display:block; text-align:left; margin-bottom:5px;"/>
+                <p:inputText id="email" value="#{loginBean.email}" required="true" style="width:100%; box-sizing:border-box;" />
+            </div>
+            
+            <div class="form-group" style="margin-top:15px;">
+                <h:outputLabel for="password" value="Password:" style="display:block; text-align:left; margin-bottom:5px;"/>
+                <p:password id="password" value="#{loginBean.password}" required="true" style="width:100%; box-sizing:border-box;" />
+            </div>
+            
+            <div style="margin-top:25px;">
+                <h:commandButton value="Login" action="#{loginBean.login}" update="messages" styleClass="btn" style="width:100%;" />
+            </div>
+            
+            <div class="text-center">
+                Don't have an account? <h:link value="Register" outcome="Register" styleClass="link-highlight" />
+            </div>
+            
+            <div class="text-center" style="margin-top: 20px;">
+                <h:link value="Back to Menu" outcome="Menua" styleClass="btn-back" />
+            </div>
+        </h:form>
+    </div>
 </h:body>
 </html>

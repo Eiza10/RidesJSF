@@ -6,8 +6,11 @@ import java.util.List;
 //import domain.Booking;
 import domain.Ride;
 import domain.Driver;
+import domain.User;
 import exceptions.RideMustBeLaterThanTodayException;
 import exceptions.RideAlreadyExistException;
+import exceptions.NotEnoughMoneyException;
+import exceptions.NotEnoughSeatsException;
 
  
 /**
@@ -65,15 +68,33 @@ public interface BLFacade  {
 	 */
 	 public List<Date> getThisMonthDatesWithRides(String from, String to, Date date);
 	 
-	 public Driver login(String email, String password);
+	 public User login(String email, String password);
 	 
-	 public boolean register(String email, String name, String password);
+	 public boolean register(String email, String name, String password, String type);
+	 
+	 public List<User> getAllUsers();
+	 
+	 public void banUser(String email, int duration, String timeUnit);
+	 
+	 public void unbanUser(String email);
+	 
+	 public List<Ride> getAllRides();
+	 
+	 public List<Ride> getRidesByDriver(String driverEmail);
+	 
+	 public void deleteRide(Ride ride);
 	
 	/**
 	 * This method calls the data access to initialize the database with some events and questions.
 	 * It is invoked only when the option "initialize" is declared in the tag dataBaseOpenMode of resources/config.xml file
 	 */	
 	 public void initializeBD();
+	 
+	 public User getUser(String email);
+	 public void depositMoney(String email, double amount);
+	 public boolean withdrawMoney(String email, double amount);
+	 
+	 public void bookRide(Integer rideNumber, String travelerEmail, int seats) throws NotEnoughSeatsException, NotEnoughMoneyException;
 
 	
 }

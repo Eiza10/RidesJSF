@@ -10,16 +10,14 @@ import jakarta.persistence.*;
 
 
 @Entity
-public class Driver implements Serializable {
+@DiscriminatorValue("DRIVER")
+public class Driver extends User implements Serializable {
 	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	@Id 
-	private String email;
-	private String name; 
-	private String password;
+
 	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.PERSIST, mappedBy="driver")
 	private Set<Ride> rides=new HashSet<Ride>();
 
@@ -28,39 +26,13 @@ public class Driver implements Serializable {
 	}
 
 	public Driver(String email, String name, String password) {
-		this.email = email;
-		this.name = name;
-		this.password = password;
-	}
-	
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
+		super(email, name, password);
 	}
 
 	
 	
 	public String toString(){
-		return email+";"+name+rides;
+		return getEmail()+";"+getName()+rides;
 	}
 	
 	/**
@@ -101,7 +73,7 @@ public class Driver implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Driver other = (Driver) obj;
-		if (email != other.email)
+		if (!getEmail().equals(other.getEmail()))
 			return false;
 		return true;
 	}
@@ -114,6 +86,10 @@ public class Driver implements Serializable {
 			}
 		}
 		return null;
+	}
+	
+	public void removeRide(Ride r) {
+		rides.remove(r);
 	}
 	
 }

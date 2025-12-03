@@ -31,6 +31,9 @@ public class QueryRidesBean implements Serializable {
     private Date date;
     private List<Ride> rides;
     private List<Date> datesWithRides;
+    
+    private Ride selectedRide;
+    private int seatsToBook;
 
     public QueryRidesBean() {
         this.facadeBL = FacadeBean.getBusinessLogic();
@@ -149,5 +152,52 @@ public class QueryRidesBean implements Serializable {
 
     public String close() {
 		return "Menua";
+	}
+    
+    public void bookRide() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		LoginBean loginBean = context.getApplication().evaluateExpressionGet(context, "#{loginBean}", LoginBean.class);
+		
+		if (loginBean == null || !loginBean.isLoggedIn() || !loginBean.isTraveler()) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "You must be logged in as a traveler to book a ride."));
+			return;
+		}
+		
+		if (selectedRide == null) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "No ride selected."));
+			return;
+		}
+		
+		if (seatsToBook <= 0) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Please select at least one seat."));
+			return;
+		}
+		
+		try {
+			facadeBL.bookRide(selectedRide.getRideNumber(), loginBean.getCurrentUser().getEmail(), seatsToBook);
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "Success", "Ride booked successfully!"));
+			// Refresh rides
+			searchRides();
+			seatsToBook = 0;
+			selectedRide = null;
+		} catch (Exception e) {
+			context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
+		}
+	}
+
+	public Ride getSelectedRide() {
+		return selectedRide;
+	}
+
+	public void setSelectedRide(Ride selectedRide) {
+		this.selectedRide = selectedRide;
+	}
+
+	public int getSeatsToBook() {
+		return seatsToBook;
+	}
+
+	public void setSeatsToBook(int seatsToBook) {
+		this.seatsToBook = seatsToBook;
 	}
 }

@@ -10,12 +10,17 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
 
-import configuration.ConfigXML;
 import configuration.UtilDate;
 import domain.Driver;
 import domain.Ride;
+import domain.User;
+import domain.Traveler;
+import domain.Admin;
+import domain.Booking;
 import exceptions.RideAlreadyExistException;
 import exceptions.RideMustBeLaterThanTodayException;
+import exceptions.NotEnoughMoneyException;
+import exceptions.NotEnoughSeatsException;
 
 /**
  * It implements the data access to the database using Hibernate with JPA
@@ -39,28 +44,6 @@ public class HibernateDataAccess {
 	public void initializeDB() {
 		db.getTransaction().begin();
 		try {
-			Driver d = db.find(Driver.class, "driver1@gmail.com");
-			if (d != null) {
-				// Fix for existing drivers with null passwords
-				if (d.getPassword() == null) {
-					System.out.println("Updating null passwords for existing drivers...");
-					d.setPassword("123");
-					
-					Driver d2 = db.find(Driver.class, "driver2@gmail.com");
-					if (d2 != null && d2.getPassword() == null) d2.setPassword("123");
-					
-					Driver d3 = db.find(Driver.class, "driver3@gmail.com");
-					if (d3 != null && d3.getPassword() == null) d3.setPassword("123");
-					
-					db.getTransaction().commit();
-					System.out.println("Passwords updated.");
-				} else {
-					db.getTransaction().commit();
-					System.out.println("Db already initialized");
-				}
-				return;
-			}
-			
 			Calendar today = Calendar.getInstance();
 			int month = today.get(Calendar.MONTH);
 			int year = today.get(Calendar.YEAR);
@@ -202,14 +185,134 @@ public class HibernateDataAccess {
 		return dates;
 	}
 
+	public User getUser(String email) {
+		return db.find(User.class, email);
+	}
+
 	public Driver getDriver(String email) {
 		return db.find(Driver.class, email);
 	}
 
-	public void storeDriver(String email, String name, String password) {
+	public void storeUser(String email, String name, String password, String type) {
 		db.getTransaction().begin();
-		Driver driver = new Driver(email, name, password);
-		db.persist(driver);
+		User user = null;
+		if (type.equals("Driver")) {
+			user = new Driver(email, name, password);
+		} else if (type.equals("Traveler")) {
+			user = new Traveler(email, name, password);
+		} else if (type.equals("Admin")) {
+			user = new Admin(email, name, password);
+		}
+		
+		if (user != null) {
+			db.persist(user);
+		}
+		db.getTransaction().commit();
+	}
+	
+	public List<User> getAllUsers() {
+		TypedQuery<User> query = db.createQuery("SELECT u FROM User u", User.class);
+		return query.getResultList();
+	}
+	
+	public void banUser(String email, Date date) {
+		db.getTransaction().begin();
+		User user = db.find(User.class, email);
+		if (user != null) {
+			user.setBanExpirationDate(date);
+		}
+		db.getTransaction().commit();
+	}
+	
+	public void unbanUser(String email) {
+		db.getTransaction().begin();
+		User user = db.find(User.class, email);
+		if (user != null) {
+			user.setBanExpirationDate(null);
+		}
+		db.getTransaction().commit();
+	}
+	
+	public List<Ride> getAllRides() {
+		TypedQuery<Ride> query = db.createQuery("SELECT r FROM Ride r", Ride.class);
+		return query.getResultList();
+	}
+	
+	public List<Ride> getRidesByDriver(String driverEmail) {
+		TypedQuery<Ride> query = db.createQuery("SELECT r FROM Ride r WHERE r.driver.email = :driverEmail", Ride.class);
+		query.setParameter("driverEmail", driverEmail);
+		return query.getResultList();
+	}
+	
+	public void deleteRide(Ride ride) {
+		db.getTransaction().begin();
+		Ride r = db.find(Ride.class, ride.getRideNumber());
+		if (r != null) {
+			Driver driver = r.getDriver();
+			driver.removeRide(r); // Assuming Driver has removeRide, if not I might need to check Driver.java
+			db.remove(r);
+		}
+		db.getTransaction().commit();
+	}
+	
+	public void depositMoney(String email, double amount) {
+		db.getTransaction().begin();
+		User user = db.find(User.class, email);
+		if (user != null) {
+			user.setWallet(user.getWallet() + amount);
+			db.merge(user);
+		}
+		db.getTransaction().commit();
+	}
+
+	public boolean withdrawMoney(String email, double amount) {
+		boolean success = false;
+		db.getTransaction().begin();
+		User user = db.find(User.class, email);
+		if (user != null) {
+			if (user.getWallet() >= amount) {
+				user.setWallet(user.getWallet() - amount);
+				db.merge(user);
+				success = true;
+			}
+		}
+		db.getTransaction().commit();
+		return success;
+	}
+	
+	public void bookRide(Integer rideNumber, String travelerEmail, int seats) throws NotEnoughSeatsException, NotEnoughMoneyException {
+		db.getTransaction().begin();
+		Ride ride = db.find(Ride.class, rideNumber);
+		Traveler traveler = db.find(Traveler.class, travelerEmail);
+		
+		if (ride.getnPlaces() < seats) {
+			db.getTransaction().rollback();
+			throw new NotEnoughSeatsException("Not enough seats available");
+		}
+		
+		double totalPrice = ride.getPrice() * seats;
+		
+		if (traveler.getWallet() < totalPrice) {
+			db.getTransaction().rollback();
+			throw new NotEnoughMoneyException("Not enough money in wallet");
+		}
+		
+		// Update wallet
+		traveler.setWallet(traveler.getWallet() - totalPrice);
+		Driver driver = ride.getDriver();
+		driver.setWallet(driver.getWallet() + totalPrice);
+		
+		// Update ride
+		ride.setnPlaces(ride.getnPlaces() - seats);
+		
+		// Create booking
+		Booking booking = new Booking(ride, traveler, seats, totalPrice);
+		db.persist(booking);
+		
+		db.merge(ride);
+		db.merge(traveler);
+		db.merge(driver);
+		
 		db.getTransaction().commit();
 	}
 

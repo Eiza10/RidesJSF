@@ -8,7 +8,8 @@ import jakarta.faces.context.FacesContext;
 import jakarta.inject.Named;
 
 import businessLogic.BLFacade;
-import domain.Driver;
+import domain.User;
+import domain.Admin;
 
 @Named("loginBean")
 @SessionScoped
@@ -18,7 +19,7 @@ public class LoginBean implements Serializable {
 	
 	private String email;
 	private String password;
-	private Driver currentUser;
+	private User currentUser;
 
 	public LoginBean() {
 	}
@@ -39,22 +40,39 @@ public class LoginBean implements Serializable {
 		this.password = password;
 	}
 
-	public Driver getCurrentUser() {
+	public User getCurrentUser() {
 		return currentUser;
 	}
 	
 	public boolean isLoggedIn() {
 		return currentUser != null;
 	}
+	
+	public boolean isAdmin() {
+		return currentUser != null && currentUser instanceof Admin;
+	}
+	
+	public boolean isDriver() {
+		return currentUser != null && currentUser instanceof domain.Driver;
+	}
+	
+	public boolean isTraveler() {
+		return currentUser != null && currentUser instanceof domain.Traveler;
+	}
 
 	public String login() {
 		BLFacade facade = FacadeBean.getBusinessLogic();
-		Driver d = facade.login(email, password);
-		if (d != null) {
-			currentUser = d;
-			return "Menua?faces-redirect=true";
-		} else {
-			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Invalid email or password"));
+		try {
+			User u = facade.login(email, password);
+			if (u != null) {
+				currentUser = u;
+				return "Menua?faces-redirect=true";
+			} else {
+				FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Invalid email or password"));
+				return null;
+			}
+		} catch (RuntimeException e) {
+			FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", e.getMessage()));
 			return null;
 		}
 	}

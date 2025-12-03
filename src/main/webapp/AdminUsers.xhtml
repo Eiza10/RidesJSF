@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Admin Panel</title>
+    <h:outputStylesheet name="css/styles.css" />
+</h:head>
+
+<h:body>
+    <div class="navbar">
+        <h:form>
+            <h:panelGroup rendered="#{loginBean.loggedIn}">
+                <span class="welcome-msg">Welcome, #{loginBean.currentUser.name}!</span>
+                <h:commandButton value="Logout" styleClass="btn-nav" action="#{loginBean.logout}" />
+            </h:panelGroup>
+        </h:form>
+    </div>
+
+    <div class="card card-wide" style="margin-top: 80px;">
+        <div class="title">Admin Panel - Manage Users</div>
+        
+        <h:form id="form">
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+            
+            <p:dataTable var="user" value="#{adminBean.users}" paginator="true" rows="10">
+                <p:column headerText="Email">
+                    <h:outputText value="#{user.email}" />
+                </p:column>
+                
+                <p:column headerText="Name">
+                    <h:outputText value="#{user.name}" />
+                </p:column>
+                
+                <p:column headerText="Status" style="width: 150px; text-align: center;">
+                    <h:outputText value="Admin" rendered="#{adminBean.isAdmin(user)}" style="color:blue; font-weight:bold;" />
+                    <h:panelGroup rendered="#{!adminBean.isAdmin(user)}">
+                        <h:outputText value="Banned until #{user.banExpirationDate}" rendered="#{user.banned}" style="color:red; font-weight:bold;" />
+                        <h:outputText value="Active" rendered="#{!user.banned}" style="color:green;" />
+                    </h:panelGroup>
+                </p:column>
+                
+                <p:column headerText="Action" style="width: 400px;">
+                    <h:outputText value="Protected" rendered="#{adminBean.isAdmin(user)}" style="font-style:italic; color:gray;" />
+                    <h:panelGroup rendered="#{!adminBean.isAdmin(user)}">
+                        <h:panelGroup rendered="#{!user.banned}">
+                            <div class="action-group">
+                                <p:inputText value="#{adminBean.banDurationMap[user.email]}" style="width:70px;" placeholder="Time">
+                                    <f:convertNumber integerOnly="true" />
+                                </p:inputText>
+                                <p:selectOneMenu value="#{adminBean.banUnitMap[user.email]}" style="width:120px; vertical-align:middle;">
+                                    <f:selectItem itemLabel="Days" itemValue="Days" />
+                                    <f:selectItem itemLabel="Hours" itemValue="Hours" />
+                                    <f:selectItem itemLabel="Minutes" itemValue="Minutes" />
+                                </p:selectOneMenu>
+                                <p:commandButton value="Ban" action="#{adminBean.banUser(user)}" update="@form" styleClass="ui-button-danger" />
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{user.banned}">
+                            <p:commandButton value="Unban" action="#{adminBean.unbanUser(user)}" update="@form" styleClass="ui-button-success" />
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </p:column>
+            </p:dataTable>
+            
+            <div style="margin-top: 20px;">
+                <h:link value="Back to Menu" outcome="Menua" styleClass="btn-back" />
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html>

@@ -88,8 +88,28 @@
                             <f:convertNumber type="currency" currencySymbol="€" />
                         </h:outputText>
                     </p:column>
+                    
+                    <p:column headerText="Book" rendered="#{loginBean.traveler}" style="text-align: center;">
+                        <p:commandButton value="Book" oncomplete="PF('bookDialog').show()" update=":findRidesForm:bookDialog" icon="pi pi-ticket">
+                            <f:setPropertyActionListener value="#{ride}" target="#{queryRidesBean.selectedRide}" />
+                        </p:commandButton>
+                    </p:column>
                 </p:dataTable>
             </p:outputPanel>
+            
+            <p:dialog header="Book Ride" widgetVar="bookDialog" modal="true" showEffect="fade" hideEffect="fade" resizable="false">
+                <p:outputPanel id="bookDialog" style="text-align:center;">
+                    <h:panelGrid columns="2" cellpadding="5" rendered="#{not empty queryRidesBean.selectedRide}">
+                        <h:outputLabel for="seats" value="Seats:" />
+                        <p:spinner id="seats" value="#{queryRidesBean.seatsToBook}" min="1" max="#{queryRidesBean.selectedRide.nPlaces}" />
+                        
+                        <f:facet name="footer">
+                            <p:commandButton value="Confirm" action="#{queryRidesBean.bookRide}" update=":findRidesForm:messages :findRidesForm:ridesTable" oncomplete="PF('bookDialog').hide()" />
+                        </f:facet>
+                    </h:panelGrid>
+                </p:outputPanel>
+            </p:dialog>
+            
             <div style="text-align: center;">
             	<h:commandButton value="Close" action="#{queryRidesBean.close}" styleClass="btn" style="margin-top: 10px;" immediate="true" />
             </div>

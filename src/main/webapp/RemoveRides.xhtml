@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Remove Rides</title>
+    <h:outputStylesheet name="css/styles.css" />
+</h:head>
+
+<h:body>
+    <div class="navbar">
+        <h:form>
+            <h:panelGroup rendered="#{loginBean.loggedIn}">
+                <span class="welcome-msg">Welcome, #{loginBean.currentUser.name}!</span>
+                <h:commandButton value="Logout" styleClass="btn-nav" action="#{loginBean.logout}" />
+            </h:panelGroup>
+        </h:form>
+    </div>
+
+    <div class="card card-wide" style="margin-top: 80px;">
+        <div class="title">Remove Rides</div>
+        
+        <h:form id="form">
+            <p:messages id="messages" showDetail="true" autoUpdate="true" closable="true" />
+            
+            <p:dataTable var="ride" value="#{removeRidesBean.rides}" paginator="true" rows="10" emptyMessage="No rides found.">
+                <p:column rendered="#{loginBean.admin}" style="width: 20%; text-align: left;">
+                    <f:facet name="header">
+                        <div style="text-align: left;">Driver</div>
+                    </f:facet>
+                    <h:outputText value="#{ride.driver.email}" />
+                </p:column>
+                
+                <p:column style="width: 20%; text-align: center;">
+                    <f:facet name="header">
+                        <div style="text-align: center;">From</div>
+                    </f:facet>
+                    <h:outputText value="#{ride.from}" />
+                </p:column>
+                
+                <p:column style="width: 20%; text-align: center;">
+                    <f:facet name="header">
+                        <div style="text-align: center;">To</div>
+                    </f:facet>
+                    <h:outputText value="#{ride.to}" />
+                </p:column>
+                
+                <p:column style="width: 15%; text-align: center;">
+                    <f:facet name="header">
+                        <div style="text-align: center;">Date</div>
+                    </f:facet>
+                    <h:outputText value="#{ride.date}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+                
+                <p:column style="width: 10%; text-align: right;">
+                    <f:facet name="header">
+                        <div style="text-align: right;">Price</div>
+                    </f:facet>
+                    <h:outputText value="#{ride.price}€" />
+                </p:column>
+                
+                <p:column style="width: 15%; text-align: center;">
+                    <f:facet name="header">
+                        <div style="text-align: center;">Action</div>
+                    </f:facet>
+                    <p:commandButton value="Delete" action="#{removeRidesBean.deleteRide(ride)}" update="@form" styleClass="ui-button-danger" icon="pi pi-trash">
+                        <p:confirm header="Confirmation" message="Are you sure you want to delete this ride?" icon="pi pi-exclamation-triangle" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+            
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
+            </p:confirmDialog>
+            
+            <div style="margin-top: 20px;">
+                <h:link value="Back to Menu" outcome="Menua" styleClass="btn-back" />
+            </div>
+        </h:form>
+    </div>
+</h:body>
+</html>

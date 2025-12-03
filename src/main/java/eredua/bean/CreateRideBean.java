@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.ResourceBundle;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
@@ -13,6 +14,7 @@ import jakarta.inject.Named;
 
 import businessLogic.BLFacade;
 import configuration.UtilDate;
+import domain.Driver;
 import exceptions.RideAlreadyExistException;
 import exceptions.RideMustBeLaterThanTodayException;
 
@@ -50,6 +52,17 @@ public class CreateRideBean implements Serializable {
 	        System.out.println("=== EXCEPTION ERAIKITZAILEAN ===");
 	        e.printStackTrace(); 
 	    }
+	}
+	
+	@PostConstruct
+	public void init() {
+		if (loginBean == null || loginBean.getCurrentUser() == null || !(loginBean.getCurrentUser() instanceof Driver)) {
+			try {
+				FacesContext.getCurrentInstance().getExternalContext().redirect("Menua.xhtml");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public String getOrigin() {

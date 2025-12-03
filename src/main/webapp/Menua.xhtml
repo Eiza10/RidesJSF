@@ -7,20 +7,29 @@
     <h:outputStylesheet name="css/styles.css" />
 </h:head>
 <h:body>
+    <div class="navbar">
+        <h:form>
+            <h:panelGroup rendered="#{loginBean.loggedIn}">
+                <span class="welcome-msg">Welcome, #{loginBean.currentUser.name}!</span>
+                <h:commandButton value="Logout" styleClass="btn-nav" action="#{loginBean.logout}" />
+            </h:panelGroup>
+            
+            <h:panelGroup rendered="#{!loginBean.loggedIn}">
+                <h:commandButton value="Login" styleClass="btn-nav" action="Login?faces-redirect=true" />
+                <h:commandButton value="Register" styleClass="btn-nav" action="Register?faces-redirect=true" />
+            </h:panelGroup>
+        </h:form>
+    </div>
+
     <div class="card menu-card">
         <div class="title">Select Option</div>
-        
-        <h:panelGroup rendered="#{loginBean.loggedIn}">
-            <p>Welcome, #{loginBean.currentUser.name}!</p>
-        </h:panelGroup>
 
         <h:form>
-            <h:commandButton value="Create Ride" styleClass="btn" action="CreateRide?faces-redirect=true" rendered="#{loginBean.loggedIn}" />
+            <h:commandButton value="Create Ride" styleClass="btn" action="CreateRide?faces-redirect=true" rendered="#{loginBean.driver}" />
             <h:commandButton value="Query Rides" styleClass="btn" action="QueryRides?faces-redirect=true" />
-            
-            <h:commandButton value="Login" styleClass="btn" action="Login?faces-redirect=true" rendered="#{!loginBean.loggedIn}" />
-            <h:commandButton value="Register" styleClass="btn" action="Register?faces-redirect=true" rendered="#{!loginBean.loggedIn}" />
-            <h:commandButton value="Logout" styleClass="btn" action="#{loginBean.logout}" rendered="#{loginBean.loggedIn}" />
+            <h:commandButton value="Remove Rides" styleClass="btn" action="RemoveRides?faces-redirect=true" rendered="#{loginBean.driver or loginBean.admin}" />
+            <h:commandButton value="Wallet" styleClass="btn" action="Wallet?faces-redirect=true" rendered="#{loginBean.driver or loginBean.traveler}" />
+            <h:commandButton value="Admin Panel" styleClass="btn" action="AdminUsers?faces-redirect=true" rendered="#{loginBean.admin}" />
         </h:form>
     </div>
 </h:body>

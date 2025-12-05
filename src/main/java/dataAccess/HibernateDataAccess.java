@@ -22,6 +22,8 @@ import exceptions.RideMustBeLaterThanTodayException;
 import exceptions.NotEnoughMoneyException;
 import exceptions.NotEnoughSeatsException;
 
+import exceptions.LateCancellationException;
+
 /**
  * It implements the data access to the database using Hibernate with JPA
  */
@@ -176,7 +178,7 @@ public class HibernateDataAccess {
 		Date firstDayMonthDate = UtilDate.firstDayMonth(date);
 		Date lastDayMonthDate = UtilDate.lastDayMonth(date);
 
-		TypedQuery<Date> query = db.createQuery("SELECT DISTINCT r.date FROM Ride r WHERE r.from=:from AND r.to=:to AND r.date BETWEEN :startDate AND :endDate", Date.class);
+		TypedQuery<Date> query = db.createQuery("SELECT DISTINCT r.date FROM Ride r WHERE r.from=:from AND r.to=:to AND r.date BETWEEN :startDate AND :endDate AND r.nPlaces > 0", Date.class);
 		query.setParameter("from", from);
 		query.setParameter("to", to);
 		query.setParameter("startDate", firstDayMonthDate);
@@ -187,6 +189,16 @@ public class HibernateDataAccess {
 
 	public User getUser(String email) {
 		return db.find(User.class, email);
+	}
+	
+	public void clearBan(String email) {
+		db.getTransaction().begin();
+		User user = db.find(User.class, email);
+		if (user != null) {
+			user.setBanExpirationDate(null);
+			db.merge(user);
+		}
+		db.getTransaction().commit();
 	}
 
 	public Driver getDriver(String email) {
@@ -248,8 +260,27 @@ public class HibernateDataAccess {
 		db.getTransaction().begin();
 		Ride r = db.find(Ride.class, ride.getRideNumber());
 		if (r != null) {
+			// Find and refund bookings
+			TypedQuery<Booking> query = db.createQuery("SELECT b FROM Booking b WHERE b.ride = :ride", Booking.class);
+			query.setParameter("ride", r);
+			List<Booking> bookings = query.getResultList();
+			
 			Driver driver = r.getDriver();
-			driver.removeRide(r); // Assuming Driver has removeRide, if not I might need to check Driver.java
+			
+			for (Booking b : bookings) {
+				Traveler traveler = b.getTraveler();
+				double refund = b.getPrice();
+				
+				// Refund money
+				traveler.setWallet(traveler.getWallet() + refund);
+				driver.setWallet(driver.getWallet() - refund);
+				
+				db.merge(traveler);
+				db.remove(b);
+			}
+			db.merge(driver);
+			
+			driver.removeRide(r); 
 			db.remove(r);
 		}
 		db.getTransaction().commit();
@@ -314,6 +345,49 @@ public class HibernateDataAccess {
 		db.merge(driver);
 		
 		db.getTransaction().commit();
+	}
+	
+	public List<Booking> getBookingsByTraveler(String email) {
+		TypedQuery<Booking> query = db.createQuery("SELECT b FROM Booking b WHERE b.traveler.email = :email", Booking.class);
+		query.setParameter("email", email);
+		return query.getResultList();
+	}
+	
+	public double cancelBooking(Integer bookingNumber) throws LateCancellationException {
+		db.getTransaction().begin();
+		Booking booking = db.find(Booking.class, bookingNumber);
+		double refund = 0;
+		if (booking != null) {
+			Ride ride = booking.getRide();
+			Traveler traveler = booking.getTraveler();
+			Driver driver = ride.getDriver();
+			
+			long diff = ride.getDate().getTime() - new Date().getTime();
+			double hours = diff / (60 * 60 * 1000.0);
+			
+			if (hours < 48) {
+				db.getTransaction().rollback();
+				throw new LateCancellationException("Cannot cancel booking less than 48 hours before the ride.");
+			}
+			
+			refund = booking.getPrice();
+			
+			// Update wallets
+			traveler.setWallet(traveler.getWallet() + refund);
+			driver.setWallet(driver.getWallet() - refund);
+			
+			// Update ride seats
+			ride.setnPlaces(ride.getnPlaces() + booking.getSeats());
+			
+			// Remove booking
+			db.remove(booking);
+			
+			db.merge(traveler);
+			db.merge(driver);
+			db.merge(ride);
+		}
+		db.getTransaction().commit();
+		return refund;
 	}
 
 	public void open() {

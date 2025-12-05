@@ -113,7 +113,15 @@ public class QueryRidesBean implements Serializable {
                         new FacesMessage(FacesMessage.SEVERITY_WARN, "Warning", "Origin and destination cannot be the same."));
                 this.rides = new Vector<>(); 
             } else {
-                this.rides = facadeBL.getRides(from, to, date);
+                List<Ride> allRides = facadeBL.getRides(from, to, date);
+                this.rides = new ArrayList<>();
+                if (allRides != null) {
+                	for (Ride r : allRides) {
+                		if (r.getnPlaces() > 0) {
+                			this.rides.add(r);
+                		}
+                	}
+                }
                 this.datesWithRides = facadeBL.getThisMonthDatesWithRides(from, to, date);
             }
         }

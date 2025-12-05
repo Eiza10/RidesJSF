@@ -8,10 +8,12 @@ import dataAccess.HibernateDataAccess;
 import domain.Ride;
 import domain.Driver;
 import domain.User;
+import domain.Booking;
 import exceptions.RideMustBeLaterThanTodayException;
 import exceptions.RideAlreadyExistException;
 import exceptions.NotEnoughMoneyException;
 import exceptions.NotEnoughSeatsException;
+import exceptions.LateCancellationException;
 
 /**
  * It implements the business logic as a web service.
@@ -123,6 +125,14 @@ public class BLFacadeImplementation  implements BLFacade {
 			if (user.isBanned()) {
 				throw new RuntimeException("User is banned until " + user.getBanExpirationDate());
 			}
+			
+			if (user.getBanExpirationDate() != null) {
+				dbManager.open();
+				dbManager.clearBan(email);
+				dbManager.close();
+				user.setBanExpirationDate(null);
+			}
+			
 			return user;
 		}
 		return null;
@@ -214,6 +224,25 @@ public class BLFacadeImplementation  implements BLFacade {
 		try {
 			dbManager.bookRide(rideNumber, travelerEmail, seats);
 		} catch (NotEnoughSeatsException | NotEnoughMoneyException e) {
+			throw e;
+		} finally {
+			dbManager.close();
+		}
+	}
+	
+	public List<Booking> getBookingsByTraveler(String email) {
+		dbManager.open();
+		List<Booking> bookings = dbManager.getBookingsByTraveler(email);
+		dbManager.close();
+		return bookings;
+	}
+	
+	public double cancelBooking(Integer bookingNumber) throws LateCancellationException {
+		dbManager.open();
+		try {
+			double refund = dbManager.cancelBooking(bookingNumber);
+			return refund;
+		} catch (LateCancellationException e) {
 			throw e;
 		} finally {
 			dbManager.close();

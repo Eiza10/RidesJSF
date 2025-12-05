@@ -7,10 +7,12 @@ import java.util.List;
 import domain.Ride;
 import domain.Driver;
 import domain.User;
+import domain.Booking;
 import exceptions.RideMustBeLaterThanTodayException;
 import exceptions.RideAlreadyExistException;
 import exceptions.NotEnoughMoneyException;
 import exceptions.NotEnoughSeatsException;
+import exceptions.LateCancellationException;
 
  
 /**
@@ -95,6 +97,10 @@ public interface BLFacade  {
 	 public boolean withdrawMoney(String email, double amount);
 	 
 	 public void bookRide(Integer rideNumber, String travelerEmail, int seats) throws NotEnoughSeatsException, NotEnoughMoneyException;
+	 
+	 public List<Booking> getBookingsByTraveler(String email);
+	 
+	 public double cancelBooking(Integer bookingNumber) throws LateCancellationException;
 
 	
 }

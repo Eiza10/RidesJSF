@@ -31,6 +31,7 @@
             <h:commandButton value="Remove Rides" styleClass="btn" action="RemoveRides?faces-redirect=true" rendered="#{loginBean.driver or loginBean.admin}" />
             <h:commandButton value="Wallet" styleClass="btn" action="Wallet?faces-redirect=true" rendered="#{loginBean.driver or loginBean.traveler}" />
             <h:commandButton value="Admin Panel" styleClass="btn" action="AdminUsers?faces-redirect=true" rendered="#{loginBean.admin}" />
+            <h:commandButton value="Gidari baten bidai guztiak erakutsi" styleClass="btn" action="DriversList?faces-redirect=true"/>      
         </h:form>
     </div>
 </h:body>

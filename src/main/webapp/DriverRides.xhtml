@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Gidariaren bidaiak</title>
+    <h:outputStylesheet name="css/styles.css" />
+</h:head>
+<h:body>
+    <h:form id="driverRidesForm">
+        <p:panel header="#{driversRidesBean.selectedDriver.name}" style="width: 80%; margin: 0 auto;">
+            
+            <p:dataTable id="ridesTable" value="#{driversRidesBean.driverRides}" var="ride" emptyMessage="Gidari honek ez du bidaiarik">
+                <p:column headerText="Depart City">
+                    <h:outputText value="#{ride.from}" />
+                </p:column>
+                
+                <p:column headerText="Arrival City">
+                    <h:outputText value="#{ride.to}" />
+                </p:column>
+                
+                <p:column headerText="Ride Date">
+                    <h:outputText value="#{ride.date}">
+                        <f:convertDateTime pattern="dd/MM/yyyy" />
+                    </h:outputText>
+                </p:column>
+                
+                <p:column headerText="Price">
+                    <h:outputText value="#{ride.price}" />
+                </p:column>
+                
+            </p:dataTable>
+            
+            <br/>
+            <h:commandButton value="Itzuli" action="DriversList" />
+        </p:panel>
+    </h:form>
+</h:body>
+</html>

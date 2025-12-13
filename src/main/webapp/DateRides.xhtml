@@ -1,0 +1,24 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Date Rides</title>
+    <h:outputStylesheet library="css" name="styles.css" />
+</h:head>
+<h:body>
+    <h:form id="form">
+        <p:outputPanel id="calendarPanel" style="display:inline-block; margin-bottom:20px;">
+            <p:calendar id="calendar" value="#{dateRidesBean.selectedDate}" pattern="dd/MM/yyyy" navigator="true">
+                <p:ajax event="dateSelect" listener="#{dateRidesBean.onDateSelect}" update="goButton" />
+            </p:calendar>
+        </p:outputPanel>
+        <p:commandButton id="goButton" value="Go to table" action="#{dateRidesBean.goToRidesForDate}" styleClass="ui-button-secondary"/>
+        <h:commandButton value="Back to Menu" action="Menua?faces-redirect=true" styleClass="ui-button-secondary" />   
+    </h:form>
+</h:body>
+</html>

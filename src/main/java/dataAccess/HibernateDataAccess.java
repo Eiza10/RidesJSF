@@ -46,18 +46,32 @@ public class HibernateDataAccess {
 	public void initializeDB() {
 		db.getTransaction().begin();
 		try {
+			// Check if database is already initialized
+			User existingDriver = db.find(User.class, "driver1@gmail.com");
+			if (existingDriver != null) {
+				db.getTransaction().commit();
+				System.out.println("Db already initialized");
+				return;
+			}
+			
 			Calendar today = Calendar.getInstance();
 			int month = today.get(Calendar.MONTH);
 			int year = today.get(Calendar.YEAR);
 			if (month == 12) {
 				month = 1;
 				year += 1;
-			}
+			}			
 
 			// Create drivers
 			Driver driver1 = new Driver("driver1@gmail.com", "Aitor Fernandez", "123");
 			Driver driver2 = new Driver("driver2@gmail.com", "Ane Gaztañaga", "123");
 			Driver driver3 = new Driver("driver3@gmail.com", "Test driver", "123");
+
+			// Create travelers
+			Traveler traveler1 = new Traveler("traveler@gmail.com", "Iker Goenaga", "123");
+			
+			// Create admin
+			Admin admin1 = new Admin("admin@gmail.com", "Admin User", "123");
 
 			// Create rides
 			driver1.addRide("Donostia", "Bilbo", UtilDate.newDate(year, month, 15), 4, 7);
@@ -74,6 +88,8 @@ public class HibernateDataAccess {
 			db.persist(driver1);
 			db.persist(driver2);
 			db.persist(driver3);
+			db.persist(traveler1);
+			db.persist(admin1);
 
 			db.getTransaction().commit();
 			System.out.println("Db initialized");
@@ -388,6 +404,26 @@ public class HibernateDataAccess {
 		}
 		db.getTransaction().commit();
 		return refund;
+	}
+
+	//getRidesForDate
+	 public List<Ride> getRidesForDate(Date date) {
+		TypedQuery<Ride> query = db.createQuery("SELECT r FROM Ride r JOIN FETCH r.driver WHERE r.date=:date", Ride.class);
+		query.setParameter("date", date);
+		List<Ride> rides = query.getResultList();
+		return rides;
+	 }
+	 
+	 public List<Driver> getAllDrivers() {
+			TypedQuery<Driver> query = db.createQuery("SELECT d FROM Driver d", Driver.class);
+			return query.getResultList();
+	}
+	 
+	 public List<Ride> getRidesByDriver(Driver d) {
+		 	// We merge the driver to ensure it's attached, or just query by driver
+			TypedQuery<Ride> query = db.createQuery("SELECT r FROM Ride r WHERE r.driver=:driver", Ride.class);
+			query.setParameter("driver", d);
+			return query.getResultList();
 	}
 
 	public void open() {

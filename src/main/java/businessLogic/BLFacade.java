@@ -76,6 +76,8 @@ public interface BLFacade  {
 	 
 	 public List<User> getAllUsers();
 	 
+	 public List<Driver> getAllDrivers();
+	 
 	 public void banUser(String email, int duration, String timeUnit);
 	 
 	 public void unbanUser(String email);
@@ -101,6 +103,8 @@ public interface BLFacade  {
 	 public List<Booking> getBookingsByTraveler(String email);
 	 
 	 public double cancelBooking(Integer bookingNumber) throws LateCancellationException;
+
+	 public List<Ride> getRidesForDate(Date date);
 
 	
 }

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Gidarien zerrenda</title>
+    <h:outputStylesheet name="css/styles.css" />
+</h:head>
+<h:body>
+    <h:form id="driversForm">
+        <p:panel header="selectOneMenu: Gidarien zerrenda" style="width: 80%; margin: 0 auto;">
+            <p:dataTable id="driversTable" value="#{driversRidesBean.drivers}" var="driver"
+                         selectionMode="single" selection="#{driversRidesBean.selectedDriver}" rowKey="#{driver.email}">
+                
+                <p:column headerText="Emaila">
+                    <h:outputText value="#{driver.email}" />
+                </p:column>
+
+				<p:column headerText="Izena">
+					<h:outputText value="#{driver.name}" />
+				</p:column>
+            </p:dataTable>
+            
+            <br/>
+            <h:commandButton value="Bidai guztiak erakutsi" action="#{driversRidesBean.viewRides}" />
+            <h:commandButton value="Itzuli hasiera orrira" action="Menua" immediate="true" />
+        </p:panel>
+    </h:form>
+</h:body>
+</html>

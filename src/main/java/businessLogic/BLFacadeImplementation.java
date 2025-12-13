@@ -157,6 +157,13 @@ public class BLFacadeImplementation  implements BLFacade {
 		return users;
 	}
 	
+	public List<Driver> getAllDrivers() {
+		dbManager.open();
+		List<Driver> drivers = dbManager.getAllDrivers();
+		dbManager.close();
+		return drivers;
+	}
+	
 	public void banUser(String email, int duration, String timeUnit) {
 		dbManager.open();
 		Date date = new Date();
@@ -248,6 +255,13 @@ public class BLFacadeImplementation  implements BLFacade {
 			dbManager.close();
 		}
 	}
+
+	 public List<Ride> getRidesForDate(Date date) {
+		 dbManager.open();
+		 List<Ride> rides = dbManager.getRidesForDate(date);
+		 dbManager.close();
+		 return rides;
+	 }
 
 }
 

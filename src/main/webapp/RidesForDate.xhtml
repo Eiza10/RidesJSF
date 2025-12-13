@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Rides For Date</title>
+    <h:outputStylesheet name="css/styles.css" />
+</h:head>
+<h:body>
+    <h:form id="ridesForm">
+        <p:dataTable id="ridesTable" var="ride" value="#{dateRidesBean.rides}" paginator="true" rows="10" 
+                     emptyMessage="No rides available for the selected date." lazy="false">
+            <p:column headerText="Date" style="width: 20%; text-align: center;">
+                <h:outputText value="#{ride.date}">
+                    <f:convertDateTime pattern="dd/MM/yyyy" timeZone="Europe/Madrid"/>
+                </h:outputText>
+            </p:column>
+            
+            <p:column headerText="From" style="width: 25%; text-align: center;">
+                <h:outputText value="#{ride.from}" />
+            </p:column>
+            
+            <p:column headerText="To" style="width: 25%; text-align: center;">
+                <h:outputText value="#{ride.to}" />
+            </p:column>
+            
+            <p:column headerText="Driver" style="width: 20%; text-align: left;">
+                <h:outputText value="#{ride.driver.name}" />
+            </p:column>
+            
+            <p:column headerText="Available Seats" style="width: 10%; text-align: center;">
+                <h:outputText value="#{ride.nPlaces}" />
+            </p:column>
+        </p:dataTable>
+        <h:commandButton value="Back to Date Selection" action="DateRides?faces-redirect=true" styleClass="ui-button-secondary" />
+    </h:form>
+</h:body>
+</html>

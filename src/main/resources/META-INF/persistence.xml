@@ -26,7 +26,7 @@ value="org.hibernate.dialect.MariaDBDialect" />
  <property name="hibernate.hbm2ddl.auto" value="update" />
  <property name="hibernate.connection.autocommit" value="false"
 />
- <property name="hibernate.connection.pool_size" value="1" />
+ <property name="hibernate.connection.pool_size" value="10" />
  <property name="hibernate.current_session_context_class" value="thread" />
 <property name="hibernate.show_sql" value="true" />
  <property name="hibernate.format_sql" value = "true"/>
